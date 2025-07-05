@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Work Hours Tracker</title>
+  </head>
+  <body>
+    <h1>Work Hours Tracker</h1>
+    <button onclick="toggleWork()">Start/Stop Working</button>
+    <ul id="work-sessions"></ul>
+
+    <script>
+      //const BASE_URL = "https://your-backend.onrender.com/work" ; // 👈 Change this to your deployed backend -->
+      //const BASE_URL = "http://localhost:8080/api/v1/worksesson"; // 👈 Change this to your deployed backend
+
+      let working = false;
+
+      async function toggleWork() {
+        if (!working) {
+          await fetch(`${BASE_URL}/start`, { method: "POST" });
+          working = true;
+          alert("Work started");
+        } else {
+          await fetch(`${BASE_URL}/end`, { method: "POST" });
+          working = false;
+          alert("Work ended");
+          loadWorkSessions();
+        }
+      }
+
+      async function loadWorkSessions() {
+        const res = await fetch(BASE_URL);
+        const data = await res.json();
+        const list = document.getElementById("work-sessions");
+        list.innerHTML = "";
+        data.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = `Start: ${item.startTime}, End: ${
+            item.endTime
+          }, Hours: ${item.hoursWorked.toFixed(2)}`;
+          list.appendChild(li);
+        });
+      }
+
+      loadWorkSessions();
+    </script>
+  </body>
+</html>
