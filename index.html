@@ -95,7 +95,8 @@
     <script>
       const BASE_URL = "http://localhost:8080/api/v1/worksesson"; // ← ضع رابط السيرفر هنا
 
-      let working = false;
+      //let working = false;
+      let working = localStorage.getItem("working") === "false"; // ← استرجاع الحالة من التخزين
 
       async function toggleWork() {
         if (!working) {
