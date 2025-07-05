@@ -2,16 +2,98 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Work Hours Tracker</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f9fafe;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+
+      button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      table {
+        width: 90%;
+        margin: 30px auto;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 14px 18px;
+        border-bottom: 1px solid #f1f1f1;
+      }
+
+      th {
+        background-color: #f5f7fa;
+        color: #34495e;
+        font-weight: 600;
+      }
+
+      td {
+        color: #2c3e50;
+      }
+
+      tr:hover {
+        background-color: #f0f8ff;
+      }
+
+      @media (max-width: 768px) {
+        table {
+          font-size: 14px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Work Hours Tracker</h1>
-    <button onclick="toggleWork()">Start/Stop Working</button>
-    <ul id="work-sessions"></ul>
+    <h1>💼 Work Hours Tracker</h1>
+    <button onclick="toggleWork()">Start / Stop Working</button>
+
+    <table id="work-sessions">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Hours Worked</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- dynamic rows -->
+      </tbody>
+    </table>
 
     <script>
-      const BASE_URL = "http://localhost:8080/api/v1/worksesson"; // ← غيّره حسب رابطك
+      const BASE_URL = "http://localhost:8080/api/v1/worksesson"; // ← ضع رابط السيرفر هنا
 
       let working = false;
 
@@ -19,11 +101,11 @@
         if (!working) {
           await fetch(`${BASE_URL}/start`, { method: "POST" });
           working = true;
-          alert("Work started");
+          alert("✅ Work started");
         } else {
           await fetch(`${BASE_URL}/end`, { method: "POST" });
           working = false;
-          alert("Work ended");
+          alert("⏹️ Work ended");
           loadWorkSessions();
         }
       }
@@ -31,17 +113,19 @@
       async function loadWorkSessions() {
         const res = await fetch(BASE_URL);
         const data = await res.json();
-        const list = document.getElementById("work-sessions");
-        list.innerHTML = "";
+        const tbody = document.querySelector("#work-sessions tbody");
+        tbody.innerHTML = "";
 
-        data.forEach((item) => {
-          const li = document.createElement("li");
-          li.textContent = `🗓️ Date: ${
-            item.workDate
-          }, 🕒 Start: ${formatDateTime(item.startTime)}, End: ${formatDateTime(
-            item.endTime
-          )}, ⏱️ Hours: ${item.hoursWorked.toFixed(2)}`;
-          list.appendChild(li);
+        data.forEach((item, index) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.workDate}</td>
+            <td>${formatDateTime(item.startTime)}</td>
+            <td>${formatDateTime(item.endTime)}</td>
+            <td>${item.hoursWorked.toFixed(2)}</td>
+          `;
+          tbody.appendChild(tr);
         });
       }
 
