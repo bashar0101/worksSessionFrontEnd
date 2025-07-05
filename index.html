@@ -75,7 +75,7 @@
   </head>
   <body>
     <h1>💼 Work Hours Tracker</h1>
-    <button onclick="toggleWork()">Start / Stop Working</button>
+    <button id="work-btn" onclick="toggleWork()">Start / Stop Working</button>
 
     <table id="work-sessions">
       <thead>
@@ -93,6 +93,13 @@
     </table>
 
     <script>
+      const btn = document.getElementById("work-btn");
+      //btn.textContent = working ? "⏹️ Stop Working" : "▶️ Start Working";
+
+      function updateButton() {
+        btn.textContent = working ? "⏹️ Stop Working" : "▶️ Start Working";
+      }
+
       const BASE_URL = "http://localhost:8080/api/v1/worksesson"; // ← ضع رابط السيرفر هنا
 
       //let working = false;
@@ -102,11 +109,13 @@
         if (!working) {
           await fetch(`${BASE_URL}/start`, { method: "POST" });
           working = true;
+          updateButton();
           alert("✅ Work started");
         } else {
           await fetch(`${BASE_URL}/end`, { method: "POST" });
           working = false;
           alert("⏹️ Work ended");
+          updateButton();
           loadWorkSessions();
         }
       }
