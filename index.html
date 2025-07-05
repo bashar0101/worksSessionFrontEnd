@@ -11,8 +11,7 @@
     <ul id="work-sessions"></ul>
 
     <script>
-      //const BASE_URL = "https://your-backend.onrender.com/work" ; // 👈 Change this to your deployed backend -->
-      const BASE_URL = "http://localhost:8080/api/v1/worksesson"; // 👈 Change this to your deployed backend
+      const BASE_URL = "http://localhost:8080/api/v1/worksesson"; // ← غيّره حسب رابطك
 
       let working = false;
 
@@ -34,13 +33,23 @@
         const data = await res.json();
         const list = document.getElementById("work-sessions");
         list.innerHTML = "";
+
         data.forEach((item) => {
           const li = document.createElement("li");
-          li.textContent = `Start: ${item.startTime}, End: ${
+          li.textContent = `🗓️ Date: ${
+            item.workDate
+          }, 🕒 Start: ${formatDateTime(item.startTime)}, End: ${formatDateTime(
             item.endTime
-          }, Hours: ${item.hoursWorked.toFixed(2)}`;
+          )}, ⏱️ Hours: ${item.hoursWorked.toFixed(2)}`;
           list.appendChild(li);
         });
+      }
+
+      function formatDateTime(dateTimeString) {
+        const date = new Date(dateTimeString);
+        const hours = date.getHours().toString().padStart(2, "0");
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        return `${hours}:${minutes}`;
       }
 
       loadWorkSessions();
